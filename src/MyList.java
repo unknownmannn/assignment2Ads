@@ -1,6 +1,6 @@
-public interface MyList<T> extends Iterable<T> {
-    Object set(int index, T item);
+public interface MyList <T> extends Iterable<T> {
     void add(T item);
+    void set(int index, T item);
     void add(int index, T item);
     void addFirst(T item);
     void addLast(T item);
@@ -10,7 +10,6 @@ public interface MyList<T> extends Iterable<T> {
     void remove(int index);
     void removeFirst();
     void removeLast();
-
     void sort();
     int indexOf(Object object);
     int lastIndexOf(Object object);

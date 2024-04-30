@@ -2,15 +2,15 @@ public class MyQueue<T> {
     private MyLinkedList<T> list = new MyLinkedList<>();
 
 
-    public T enqueue(T item) {
+    public T queue1(T item) {
         list.addLast(item);
         return item;
     }
 
 
 
-    public T dequeue(){
-        T removingItem = peek();
+    public T queue2(){
+        T removingItem = check();
         list.removeFirst();
         return removingItem;
     }
@@ -18,7 +18,7 @@ public class MyQueue<T> {
 
 
 
-    public T peek() {
+    public T check() {
         if (isEmpty()) {
             return null;
         }

@@ -1,254 +1,138 @@
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 public class MyArrayList<T> implements MyList<T> {
+    private T[] items;
     private int size = 0;
-    private static final int DEFAULT_CAPACITY = 10;
-    private T[] array;
 
     public MyArrayList() {
-        array = (T[]) new Object[DEFAULT_CAPACITY];
+        items = (T[]) new Object[10];
     }
 
-
-    public MyArrayList(int capacity) {
-        if (capacity < 0)
-            throw new IllegalArgumentException("Illegal Capacity: " + capacity);
-        array = (T[]) new Object[capacity];
-        size = 0;
+    public MyArrayList(int initialCapacity) {
+        if (initialCapacity < 0) throw new IllegalArgumentException("notvalid capacity");
+        items = (T[]) new Object[initialCapacity];
     }
 
-
-    @Override
     public int size() {
         return size;
     }
 
-
-
-    public void checkForCapacity(){
-        if(size == array.length){
-            T[] newArray = (T[]) new Object[size * 2 + 1]; //  + 1 to handle zero initial capacity
-            for(int i = 0; i<size; i++){
-                newArray[i] = (T) array[i];
-            }
-            array = newArray;
+    private void ensureCapacity() {
+        if (size == items.length) {
+            T[] newItems = (T[]) new Object[items.length * 2 + 1];
+            System.arraycopy(items, 0, newItems, 0, size);
+            items = newItems;
         }
     }
 
+    public void add(T item) {
+        ensureCapacity();
+        items[size++] = item;
+    }
 
-    @Override
-
-    public void add(T item){
-        checkForCapacity();
-        array[size] = item;
+    public void addFirst(T item) {
+        ensureCapacity();
+        System.arraycopy(items, 0, items, 1, size);
+        items[0] = item;
         size++;
     }
 
-
-    @Override
-    public void addFirst(T item){
-        checkForCapacity();
-        for( int i = size; i > 0; i--){
-            array[i] = array[i-1];
-        }
-        array[0] = item;
-        size++;
-
+    public void addLast(T item) {
+        ensureCapacity();
+        items[size++] = item;
     }
 
-    @Override
-    public void addLast(T item){
-        checkForCapacity();
-        array[size] = item;
-        size++;
-
+    private void checkIndex(int index) {
+        if (index >= size || index < 0) throw new IndexOutOfBoundsException("notvalid index");
     }
 
-    private void throwException(int index){
-        if (index > size || index < 0)
-            throw new IndexOutOfBoundsException("Invalid index: " + index);
+    private void checkNotEmpty() {
+        if (size == 0) throw new NoSuchElementException("List is empty");
     }
 
-    private void checkEmpty() {
-        if (size == 0) {
-            throw new NoSuchElementException("List is empty.");
-        }
-    }
-
-
-
-    @Override
-
-    public void add(int index, T item){
-        throwException(index);
-        checkForCapacity();
-        for(int i = size; i>index; i--){
-            array[i] = array[i-1];
-        }
-        array[index] = item;
+    public void addAtIndex(int index, T item) {
+        checkIndex(index);
+        ensureCapacity();
+        System.arraycopy(items, index, items, index + 1, size - index);
+        items[index] = item;
         size++;
     }
 
-
-    @Override
-    public void remove(int index){
-        throwException(index);
-        for( int i = index; i<size-1; i++){
-            array[i] = array[i+1];
-        }
-        array[size - 1] = null; // prevents the memory leak
+    public void remove(int index) {
+        checkIndex(index);
+        System.arraycopy(items, index + 1, items, index, size - index - 1);
+        items[size - 1] = null;
         size--;
     }
 
-    @Override
     public void removeFirst() {
-        checkEmpty();
-        for (int i = 1; i < size; i++) {
-            array[i - 1] = array[i];
-        }
-        array[--size] = null;
+        checkNotEmpty();
+        System.arraycopy(items, 1, items, 0, size - 1);
+        items[size - 1] = null;
+        size--;
     }
 
-    @Override
     public void removeLast() {
-        checkEmpty();
-        array[--size] = null;
+        checkNotEmpty();
+        items[size - 1] = null;
+        size--;
     }
 
-
-
-    @Override
-    public T get(int index){
-        throwException(index);
-        return (T) array[index];
+    public T get(int index) {
+        checkIndex(index);
+        return items[index];
     }
 
-    @Override
-    public T getFirst(){
-        checkEmpty();
-        return (T) array[0];
+    public T getFirst() {
+        checkNotEmpty();
+        return items[0];
     }
 
-    @Override
-    public T getLast(){
-        checkEmpty();
-        return (T) array[size-1];
+    public T getLast() {
+        checkNotEmpty();
+        return items[size - 1];
     }
 
-    @Override
-    public void clear(){
-        for( int i = 0; i < size; i++){
-            array[i] = null;
+    public void clear() {
+        for (int i = 0; i < size; i++) {
+            items[i] = null;
         }
         size = 0;
     }
 
-
-    @Override
-    public Object[] toArray(){
+    public Object[] toArray() {
         Object[] result = new Object[size];
-        for( int i = 0; i< size; i++){
-            result[i] = array[i];
-        }
+        System.arraycopy(items, 0, result, 0, size);
         return result;
     }
 
-    @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            private int indx = 0;
+            private int index = 0;
 
             @Override
             public boolean hasNext() {
-                return indx < size;
+                return index < size;
             }
 
             @Override
             public T next() {
                 if (!hasNext()) throw new NoSuchElementException();
-                return (T) array[indx++];
+                return items[index++];
             }
         };
     }
 
-    @Override
-    public Object set(int index, T item){
-        throwException(index);
-        return array[index] = item;
+    public T set(int index, T item) {
+        checkIndex(index);
+        T oldItem = items[index];
+        items[index] = item;
+        return oldItem;
     }
 
-
-    @Override
-    public boolean exists(Object object) {
+    public boolean contains(T object) {
         for (int i = 0; i < size; i++) {
-            if (array[i] == null && object == null) {
-                return true;  // Both are null
-            } else if (array[i] != null && array[i].equals(object)) {
-                return true;  // not null and equal
-            }
+            if (items[i] == null && object == null) return true;
+            else if (items[i] != null && items[i].equals(object)) return true;
         }
         return false;
     }
-
-
-    @Override
-    public void sort() {
-        T temp;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size - 1; j++) {
-                if (((Comparable<T>) array[j]).compareTo(array[j + 1]) > 0) {
-                    temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                }
-            }
-        }
-    }
-
-
-
-    @Override
-    public int indexOf(Object object){
-        if( object == null){
-            for (int i = 0; i < size; i++)
-            {
-                if (array[i] == null)
-                    return i;
-            }
-        }else
-        {
-            for (int i = 0; i < size; i++)
-            {
-                if(object.equals(array[i]))
-                    return i;
-            }
-        }
-        return -1;
-    }
-
-
-    @Override
-    public int lastIndexOf(Object object) {
-        if (object == null) {
-            for (int i = size - 1; i >= 0; i--) {
-                if (array[i] == null) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = size - 1; i >= 0; i--) {
-                if (object.equals(array[i])) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-
-
-
-
-
 }

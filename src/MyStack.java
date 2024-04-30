@@ -1,37 +1,34 @@
-public class MyStack<T>{
+public class MyStack<T> {
 
-    private MyArrayList<T> list = new MyArrayList<>();
+    private MyLinkedList<T> elements;
 
-
-    public T push(T item) {
-        list.add(item);
-        return item;
+    public MyStack() {
+        this.elements = new MyLinkedList<>();
     }
 
-
-    public T peek(){
-        if (empty()) {
-            return null;
-        }
-        return list.get(0);
-    }
-
-
-    public T pop(){
-        if (empty()) {
-            return null;
-        }
-        T removingItem = peek();
-        list.removeFirst();
-        return removingItem;
-    }
-
-
-    public boolean empty(){
-        return list.size() == 0;
+    public boolean empty() {
+        return elements.size() == 0;
     }
 
     public int size() {
-        return list.size();
+        return elements.size();
+    }
+
+    public T check() {
+        if (empty()) {
+            throw new IndexOutOfBoundsException("Stack is empty");
+        }
+        return elements.getLast();
+    }
+
+    public void push(T item) {
+        elements.addLast(item);
+    }
+
+    public T pop() {
+        if (empty()) {
+            throw new IllegalStateException("Stack is empty");
+        }
+        return elements.removeLast();
     }
 }

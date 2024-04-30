@@ -1,10 +1,33 @@
+import java.util.LinkedList;
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        MyLinkedList<String> list = new MyLinkedList<>();
-        list.add("apple");
-        list.add("banana");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
+        Scanner sc = new Scanner(System.in);
+        MyLinkedList<Integer> arrInt = new MyLinkedList<>();
+        arrInt.add(5);
+        arrInt.add(3);
+        arrInt.add(7);
+        arrInt.add(26);
+        arrInt.add(10);
+        arrInt.add(0, 11);
+        arrInt.sort();
+        for(int i : arrInt){
+            System.out.print(i + " ");
         }
+        System.out.println();
+        arrInt.remove(2);
+        arrInt.removeFirst();
+        for(int i : arrInt){
+            System.out.print(i + " ");
+        }
+        System.out.print("\n");
+        MyStack<Integer> stack = new MyStack<>();
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
+        stack.pop();
+        System.out.println(stack.isEmpty());
+        System.out.println(stack.peek());
     }
 }
